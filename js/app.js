@@ -15,7 +15,7 @@ App.getStats = function(){
 }
 
 App.getBackendRequests = function() {
-	$.getJSON("/log/1/TxHeader/X-Full-Uri", function(data){
+	$.getJSON("/log/1/BeReqHeader/X-Full-Uri", function(data){
 		var tmp_obj = {}
 		$.each(data["log"], function(index, element){
 			tmp_array = element["value"].split(": ");
