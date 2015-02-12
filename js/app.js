@@ -15,7 +15,7 @@ App.getStats = function(){
 }
 
 App.getBackendRequests = function() {
-	$.getJSON("/log/1/TxHeader/X-Full-Uri", function(data){
+	$.getJSON("/log/1", function(data){
 		var tmp_obj = {}
 		$.each(data["log"], function(index, element){
 			tmp_array = element["value"].split(": ");
@@ -26,14 +26,14 @@ App.getBackendRequests = function() {
 }
 
 App.calcHitRatio = function(){
-	delta_client_req = App.newStats.client_req.value - App.oldStats.client_req.value;
-	delta_cache_hit = App.newStats.cache_hit.value - App.oldStats.cache_hit.value;
+	delta_client_req = App.newStats["MAIN.client_req"]["value"] - App.oldStats["MAIN.client_req"]["value"];
+	delta_cache_hit = App.newStats["MAIN.cache_hit"]["value"] - App.oldStats["MAIN.cache_hit"]["value"];
 	hitRatio = (delta_cache_hit*100)/delta_client_req;
 	return Math.round(hitRatio);
 }
 
 App.calcAverageHitRatio = function(){
-	hitRatio = App.newStats.cache_hit.value * 100 / App.oldStats.client_req.value;
+	hitRatio = App.newStats["MAIN.cache_hit"]["value"] * 100 / App.oldStats["MAIN.cache_hit"]["value"];
 	return Math.round(hitRatio);
 }
 
@@ -50,8 +50,8 @@ App.updateRequestGauge = function() {
 }
 
 App.updateBandwidthGauge = function(){
-	var new_bandwidth = App.newStats.s_hdrbytes.value + App.newStats.s_bodybytes.value;
-	var old_bandwidth = App.oldStats.s_hdrbytes.value + App.oldStats.s_bodybytes.value;
+	var new_bandwidth = App.newStats["MAIN.s_hdrbytes"]["value"] + App.newStats["MAIN.s_bodybytes"]["value"];
+	var old_bandwidth = App.oldStats["MAIN.s_hdrbytes"]["value"] + App.oldStats["MAIN.s_bodybytes"]["value"];
 	
 	var actual_bandwidth_in_mega = Math.round((new_bandwidth - old_bandwidth) / 1024 / 1024);
 	bandwidth_per_second = Math.round(actual_bandwidth_in_mega / (App.refreshTime / 1000));
@@ -96,14 +96,14 @@ App.getCacheMetrics = function() {
 	var obj_cache = {
 		label: "Objs. in Cache",
 		new_value: nFormatter(metric_per_second("n_object")),
-		average_value: nFormatter(App.newStats.n_object.value)
+		average_value: nFormatter(App.newStats["MAIN.n_object"])
 	}
 	return [hits_ratio, hits_qty, miss_qty, obj_cache]
 }
 
 App.getTrafficMetrics = function() {
-	var new_bandwidth = App.newStats.s_hdrbytes.value + App.newStats.s_bodybytes.value;
-	var old_bandwidth = App.oldStats.s_hdrbytes.value + App.oldStats.s_bodybytes.value;
+	var new_bandwidth = App.newStats["MAIN.s_hdrbytes"]["value"] + App.newStats["MAIN.s_bodybytes"]["value"];
+	var old_bandwidth = App.oldStats["MAIN.s_hdrbytes"]["value"] + App.oldStats["MAIN.s_bodybytes"]["value"];
 	
 	var client_conn = {
 		label: "Connections",
@@ -118,13 +118,13 @@ App.getTrafficMetrics = function() {
 	var req_per_conn = {
 		label: "Req / Conn",
 		new_value: nFormatter((metric_per_second("client_req")) /(metric_per_second("client_conn")) ),
-		average_value: nFormatter(App.newStats.client_req.value / App.newStats.client_conn.value)
+		average_value: nFormatter(App.newStats["MAIN.client_req"]["value"] / App.newStats["MAIN.client_conn"]["value"])
 	}
 	
 	var bandwith = {
 		label: "Bandwidth",
 		new_value: nFormatter((new_bandwidth - old_bandwidth)/(App.refreshTime/1000)),
-		average_value: nFormatter(new_bandwidth / App.newStats.uptime.value)
+		average_value: nFormatter(new_bandwidth / App.newStats["MAIN.uptime"]["value"])
 	}
 	
 	return [client_conn, client_req, req_per_conn, bandwith]
@@ -149,8 +149,8 @@ App.getBackendMetrics = function() {
 	}
 	var backend_fetch = {
 		label: "Fetch & Pass",
-		new_value: nFormatter(App.newStats.s_pass.value + App.newStats.s_fetch.value - App.oldStats.s_fetch.value - App.oldStats.s_pass.value),
-		average_value: nFormatter((App.newStats.s_pass.value + App.newStats.s_fetch.value) / App.newStats.uptime.value)
+		new_value: nFormatter(App.newStats["MAIN.s_pass"]["value"] + App.newStats["MAIN.s_fetch"]["value"] - App.oldStats["MAIN.s_fetch"]["value"] - App.oldStats["MAIN.s_pass"]["value"]),
+		average_value: nFormatter((App.newStats["MAIN.s_pass"]["value"] + App.newStats["MAIN.s_fetch"]["value"]) / App.newStats["MAIN.uptime"]["value"])
 	}
 	return [backend_conn, backend_fetch, backend_fail, backend_reuse]
 }
@@ -241,12 +241,12 @@ function nFormatter(num) {
 }
 
 function delta_new_old_value(metric) {
-	var result = App["newStats"][metric]["value"] - App["oldStats"][metric]["value"];
+	var result = App["newStats"]["MAIN"+metric] - App["oldStats"]["MAIN"+metric];
 	return result;
 }
 
 function calc_average_value(metric) {
-	var result = App["newStats"][metric]["value"] / App.newStats.uptime.value;
+	var result = App["newStats"]["MAIN"+metric] / App.newStats["MAIN.uptime"];
 	return result;
 }
 
