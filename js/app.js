@@ -15,7 +15,7 @@ App.getStats = function(){
 }
 
 App.getBackendRequests = function() {
-	$.getJSON("/log/1", function(data){
+	$.getJSON("/log/1/ReqHeader/X-Full-Uri", function(data){
 		var tmp_obj = {}
 		$.each(data["log"], function(index, element){
 			tmp_array = element["value"].split(": ");
@@ -42,7 +42,7 @@ App.updateHitRatioGauge = function(){
 }
 
 App.updateRequestGauge = function() {
-	requests_per_second = metric_per_second("client_req");
+	requests_per_second = metric_per_second("MAIN.client_req");
 	if(requests_per_second > App.requestMaxValue){
 		App.requestMaxValue = requests_per_second;
 	}
@@ -85,13 +85,13 @@ App.getCacheMetrics = function() {
 	}
 	var hits_qty = {
 		label: "Hits Qty.",
-		new_value: nFormatter(metric_per_second("cache_hit")),
-		average_value: nFormatter(calc_average_value("cache_hit"))
+		new_value: nFormatter(metric_per_second("MAIN.cache_hit")),
+		average_value: nFormatter(calc_average_value("MAIN.cache_hit"))
 	}
 	var miss_qty = {
 		label: "Miss Qty.",
-		new_value: nFormatter(metric_per_second("cache_miss")),
-		average_value: nFormatter(calc_average_value("cache_miss"))
+		new_value: nFormatter(metric_per_second("MAIN.cache_miss")),
+		average_value: nFormatter(calc_average_value("MAIN.cache_miss"))
 	}
 	var obj_cache = {
 		label: "Objs. in Cache",
@@ -107,13 +107,13 @@ App.getTrafficMetrics = function() {
 	
 	var client_conn = {
 		label: "Connections",
-		new_value: nFormatter(metric_per_second("client_conn")),
-		average_value: nFormatter(calc_average_value("client_conn"))
+		new_value: nFormatter(metric_per_second("MAIN.sess_conn")),
+		average_value: nFormatter(calc_average_value("MAIN.sess_conn"))
 	}
 	var client_req = {
 		label: "Requests",
-		new_value: nFormatter(metric_per_second("client_req")),
-		average_value: nFormatter(calc_average_value("client_req"))
+		new_value: nFormatter(metric_per_second("MAIN.client_req")),
+		average_value: nFormatter(calc_average_value("MAIN.client_req"))
 	}
 	var req_per_conn = {
 		label: "Req / Conn",
@@ -134,18 +134,18 @@ App.getTrafficMetrics = function() {
 App.getBackendMetrics = function() {
 	var backend_conn = {
 		label: "Connections",
-		new_value: nFormatter(metric_per_second("backend_conn")),
-		average_value: nFormatter(calc_average_value("backend_conn"))
+		new_value: nFormatter(metric_per_second("MAIN.backend_conn")),
+		average_value: nFormatter(calc_average_value("MAIN.backend_conn"))
 	}
 	var backend_fail = {
 		label: "Fails",
-		new_value: nFormatter(metric_per_second("backend_fail")),
-		average_value: nFormatter(calc_average_value("backend_fail"))
+		new_value: nFormatter(metric_per_second("MAIN.backend_fail")),
+		average_value: nFormatter(calc_average_value("MAIN.backend_fail"))
 	}
 	var backend_reuse = {
 		label: "Reuse",
-		new_value: nFormatter(metric_per_second("backend_reuse")),
-		average_value: nFormatter(calc_average_value("backend_reuse"))
+		new_value: nFormatter(metric_per_second("MAIN.backend_reuse")),
+		average_value: nFormatter(calc_average_value("MAIN.backend_reuse"))
 	}
 	var backend_fetch = {
 		label: "Fetch & Pass",
@@ -246,7 +246,7 @@ function delta_new_old_value(metric) {
 }
 
 function calc_average_value(metric) {
-	var result = App["newStats"]["MAIN"+metric] / App.newStats["MAIN.uptime"];
+	var result = App["newStats"][metric]["value"] / App.newStats['MGT.uptime'].value;
 	return result;
 }
 
