@@ -1,7 +1,9 @@
 ##Introduction
 This is a simple realtime HTML Dashboard that works together with the new Varnish Agent 2 (https://github.com/varnish/vagent2).
 
-![Screenshot](https://raw.github.com/pbruna/Varnish-Agent-Dashboard/master/img/screenshot.png)
+This fork has been modified to work with Varnish4
+
+![Screenshot](https://raw.github.com/cjdmax/Varnish-Agent-Dashboard/master/img/screenshot.png)
 
 The previous image was taken from a live site using Varnish.
 
@@ -49,6 +51,8 @@ Now you are ready to use the Dashboard, just run the Agent like the following ex
 ```bash
 varnish-agent -H /var/www/html/Varnish-Agent-Dashboard
 ```
+
+or edit the /etc/default/varnish-agent file to add the same arguments
 
 and visit http://VARNISH_IP:6085/html/
 
